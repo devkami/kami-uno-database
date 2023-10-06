@@ -162,8 +162,7 @@ DELIMITER //
 CREATE FUNCTION GetStatusCliente(cod_cliente INT) RETURNS CHAR(11)
 BEGIN
   DECLARE dias_desde_ultima_compra INT;
-  DECLARE dias_desde_penultima_compra INT;
-  DECLARE diferenca_dias_ultimas_2_compras INT;
+  DECLARE dias_desde_penultima_compra INT;  
   DECLARE qtd_total_compras INT;
   
   SET dias_desde_ultima_compra = GetDiasUltimaCompra(cod_cliente);

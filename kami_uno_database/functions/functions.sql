@@ -167,8 +167,7 @@ BEGIN
   DECLARE qtd_total_compras INT;
   
   SET dias_desde_ultima_compra = GetDiasUltimaCompra(cod_cliente);
-  SET dias_desde_penultima_compra = GetDiasPenultimaCompra(cod_cliente);  
-  SET diferenca_dias_ultimas_2_compras = (dias_desde_penultima_compra - dias_desde_ultima_compra);
+  SET dias_desde_penultima_compra = GetDiasPenultimaCompra(cod_cliente);    
   SET qtd_total_compras = GetQtdTotalCompras(cod_cliente);
 
   RETURN (
@@ -176,7 +175,9 @@ BEGIN
       WHEN (qtd_total_compras = 1 AND dias_desde_ultima_compra <= 30)
       THEN 'NOVO'
       
-      WHEN (qtd_total_compras > 1 AND dias_desde_ultima_compra <= 30)
+      WHEN qtd_total_compras > 1
+      AND dias_desde_ultima_compra <= 30
+      AND dias_desde_penultima_compra <= 60
       THEN 'ATIVO'
       
       WHEN (dias_desde_ultima_compra > 30 AND dias_desde_ultima_compra <= 60)      
@@ -187,12 +188,12 @@ BEGIN
    
       WHEN qtd_total_compras > 1
       AND dias_desde_ultima_compra <= 30      
-      AND diferenca_dias_ultimas_2_compras <= 180
+      AND dias_desde_penultima_compra <= 180
       THEN 'REATIVADO'
       
       WHEN qtd_total_compras > 1
       AND dias_desde_ultima_compra <= 30
-      AND diferenca_dias_ultimas_2_compras > 180
+      AND dias_desde_penultima_compra > 180
       THEN 'RECUPERADO'
       
       ELSE 'PERDIDO'

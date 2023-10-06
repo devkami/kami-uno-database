@@ -163,3 +163,4 @@ cython_debug/
 kami_uno_database/out
 kami_uno_database/in/views/gb_views
 kami_uno_database/logs/
+poetry.lock

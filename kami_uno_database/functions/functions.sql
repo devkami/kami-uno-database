@@ -200,3 +200,93 @@ BEGIN
   );
 END //
 DELIMITER ;
+
+DROP FUNCTION IF EXISTS GetRecenciaCliente;
+
+DELIMITER //
+CREATE FUNCTION GetRecenciaCliente(cod_cliente INT) RETURNS INT
+BEGIN
+  DECLARE dias_desde_ultima_compra INT;
+  SET dias_desde_ultima_compra = GetDiasUltimaCompra(cod_cliente);
+  RETURN
+    CASE 
+      WHEN (dias_desde_ultima_compra <= 30) THEN 5
+      WHEN (dias_desde_ultima_compra > 30) AND (dias_desde_ultima_compra <= 60) THEN 4
+      WHEN (dias_desde_ultima_compra > 60) AND (dias_desde_ultima_compra <= 90) THEN 3
+      WHEN (dias_desde_ultima_compra > 90) AND (dias_desde_ultima_compra <= 150) THEN 2
+      ELSE 1
+    END;
+END //
+DELIMITER ;
+
+DROP FUNCTION IF EXISTS GetQtdComprasPeriodo;
+DELIMITER //
+CREATE FUNCTION GetQtdComprasPeriodo(cod_cliente INT, inicio_periodo DATETIME, fim_periodo DATETIME) RETURNS INT
+BEGIN
+  RETURN (
+    SELECT COUNT(nota_fiscal.cod_nota_fiscal)
+    FROM vw_sales_invoices AS nota_fiscal
+    WHERE nota_fiscal.cod_cliente = cod_cliente
+    AND nota_fiscal.dt_emissao BETWEEN inicio_periodo AND fim_periodo
+  );
+END //
+DELIMITER ;
+
+DROP FUNCTION IF EXISTS GetTotalComprasPeriodo;
+DELIMITER //
+CREATE FUNCTION GetTotalComprasPeriodo(cod_cliente INT, inicio_periodo DATETIME, fim_periodo DATETIME) RETURNS INT
+BEGIN
+  RETURN (
+    SELECT SUM(nota_fiscal.vl_total_nota_fiscal)
+    FROM vw_sales_invoices AS nota_fiscal
+    WHERE nota_fiscal.cod_cliente = cod_cliente
+    AND nota_fiscal.dt_emissao BETWEEN inicio_periodo AND fim_periodo
+  );
+END //
+DELIMITER ;
+
+DROP FUNCTION IF EXISTS GetFrequenciaCliente;
+
+DELIMITER //
+CREATE FUNCTION GetFrequenciaCliente(cod_cliente INT) RETURNS INT
+BEGIN
+  DECLARE avg_monthly_purchases FLOAT;
+  
+  SET avg_monthly_purchases = GetQtdComprasPeriodo(
+    cod_cliente, 
+    DATE(CONCAT(YEAR(CURRENT_DATE()) - 1, '-01-01')),
+    DATE(CONCAT(YEAR(CURRENT_DATE()) - 1, '-12-31'))
+  ) / 12.0;
+  
+  RETURN 
+    CASE 
+      WHEN avg_monthly_purchases >= 6 THEN 5
+      WHEN avg_monthly_purchases < 6 AND avg_monthly_purchases >= 5 THEN 4
+      WHEN avg_monthly_purchases < 5 AND avg_monthly_purchases >= 4 THEN 3
+      WHEN avg_monthly_purchases < 4 AND avg_monthly_purchases >= 2 THEN 2
+      ELSE 1
+    END;
+END //
+DELIMITER ;
+
+DROP FUNCTION IF EXISTS GetTicketMedioPeriodo;
+
+DELIMITER //
+CREATE FUNCTION GetTicketMedioPeriodo(cod_cliente INT, inicio_periodo DATETIME, fim_periodo DATETIME) RETURNS DECIMAL(10,2)
+BEGIN
+  DECLARE total_spent DECIMAL(10,2);
+  DECLARE total_purchases INT;
+  DECLARE avg_ticket DECIMAL(10,2);
+  
+  SET total_spent = GetTotalComprasPeriodo(cod_cliente, inicio_periodo, fim_periodo);
+  SET total_purchases = GetQtdComprasPeriodo(cod_cliente, inicio_periodo, fim_periodo);
+  
+  IF total_purchases > 0 THEN
+    SET avg_ticket = total_spent / total_purchases;
+  ELSE
+    SET avg_ticket = 0;
+  END IF;
+
+  RETURN avg_ticket;
+END //
+DELIMITER ;

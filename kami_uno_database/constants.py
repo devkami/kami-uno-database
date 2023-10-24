@@ -54,6 +54,14 @@ FUTURE_BILLS_NUM_COLS = {
     'cod_empresa': np.int64,
     'total_a_receber': np.float64,
 }
+RFV_CLASS_NUM_COLS = {
+    'cod_cliente': np.int64,
+    'recencia': np.int64,
+    'dias_ultima_compra': np.int64,
+    'qtd_compras_ultimo_ano': np.int64,
+    'frequencia': np.int64,
+    'ticket_medio': np.float64,
+}
 ORDER_ITEM_DATE_COLS = [
     'data_entrega',
     'dt_entrega',

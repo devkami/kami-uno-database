@@ -20,6 +20,7 @@ from kami_uno_database.constants import (
     CUSTOMER_DETAILS_NUM_COLS,
     FUTURE_BILLS_DATETIME_COLS,
     FUTURE_BILLS_NUM_COLS,
+    RFV_CLASS_NUM_COLS,
     SALES_LINES_NUM_COLS,
     SOURCE_DIR,
 )
@@ -106,6 +107,7 @@ def update_database_functions():
         db_connector_logger.exception('An unknow error occurred:', e)
         raise e
 
+
 @benchmark_with(db_connector_logger)
 @logging_with(db_connector_logger)
 def update_database_indexes():
@@ -115,6 +117,7 @@ def update_database_indexes():
     except Exception as e:
         db_connector_logger.exception('An unknow error occurred:', e)
         raise e
+
 
 @benchmark_with(db_connector_logger)
 @logging_with(db_connector_logger)
@@ -259,6 +262,20 @@ def get_vw_future_bills() -> pd.DataFrame:
             sql_script='SELECT * FROM vw_future_bills',
             date_cols=FUTURE_BILLS_DATETIME_COLS,
             cols_types=FUTURE_BILLS_NUM_COLS,
+        )
+    except Exception as e:
+        db_connector_logger.exception('An unknow error occurred:', e)
+    return df
+
+
+@benchmark_with(db_connector_logger)
+@logging_with(db_connector_logger)
+def get_vw_rfv_classification() -> pd.DataFrame:
+    df = pd.DataFrame()
+    try:
+        df = get_dataframe_from_sql_query(
+            sql_script='SELECT * FROM vw_rfv_classification',
+            cols_types=RFV_CLASS_NUM_COLS,
         )
     except Exception as e:
         db_connector_logger.exception('An unknow error occurred:', e)

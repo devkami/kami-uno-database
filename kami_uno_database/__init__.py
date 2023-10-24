@@ -14,10 +14,11 @@ from .database import (
     get_vw_board_billings,
     get_vw_customer_details,
     get_vw_future_bills,
+    get_vw_rfv_classification,
     get_vw_sales_lines,
-    update_database_views,
     update_database_functions,
-    update_database_indexes
+    update_database_indexes,
+    update_database_views,
 )
 
 __all__ = [
@@ -36,6 +37,7 @@ __all__ = [
     'get_vw_sales_lines',
     'get_vw_customer_details',
     'get_vw_future_bills',
+    'get_vw_rfv_classification',
     'get_qy_sales_teams',
     'get_qy_default_seller',
     'get_qy_sellers_contact',

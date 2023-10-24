@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kami-uno-database"
-version = "0.1.7"
+version = "0.2.7"
 description = "Python Connection For Kami database instance from UNO"
 authors = ["Maicon de Menezes <maicon@kamico.com.br>"]
 readme = "README.md"
@@ -55,7 +55,7 @@ line_length = 79
 [tool.taskipy.tasks]
 lint-review = "blue --check --diff . && isort --check --diff ."
 lint-fix = "blue . && isort ."
-pre_test = "task lint-review"
+pre_test = "task lint-fix"
 test = "pytest -s -x --cov=kami_uno_database -vv -rs"
 post_test = "coverage html"
 docs = "mkdocs serve"

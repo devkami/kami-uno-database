@@ -6,9 +6,24 @@ SELECT DISTINCTROW
   IFNULL(CAST(cliente.razao_social AS CHAR charset utf8mb4), '0') AS razao_social,
   IFNULL(CAST(GetRecenciaCliente(cliente.cod_cliente) AS CHAR charset utf8mb4), '0') AS recencia,
   IFNULL(CAST(GetDiasUltimaCompra(cliente.cod_cliente) AS CHAR charset utf8mb4), '0') AS dias_ultima_compra,
-  IFNULL(CAST(GetQtdComprasPeriodo(cliente.cod_cliente, DATE(CONCAT(YEAR(CURRENT_DATE()) - 1, '-01-01')), DATE(CONCAT(YEAR(CURRENT_DATE()) - 1, '-12-31'))) AS CHAR charset utf8mb4), '0') AS qtd_compras_ultimo_ano,
-  IFNULL(CAST(GetFrequenciaCliente(cliente.cod_cliente) AS CHAR charset utf8mb4), '0') AS frequencia,
-  IFNULL(CAST(GetTicketMedioPeriodo(cliente.cod_cliente, DATE(CONCAT(YEAR(CURRENT_DATE()) - 1, '-01-01')), DATE(CONCAT(YEAR(CURRENT_DATE()) - 1, '-12-31'))) AS CHAR charset utf8mb4), '0') AS ticket_medio
+  IFNULL(CAST(
+    GetQtdComprasPeriodo(
+      cliente.cod_cliente, 
+      SUBDATE(CURRENT_DATE(), INTERVAL 12 MONTH),
+      CURRENT_DATE()
+  ) AS CHAR charset utf8mb4), '0') AS qtd_compras_ultimo_ano,
+  IFNULL(CAST(
+    GetFrequenciaCliente(
+      cliente.cod_cliente, 
+      SUBDATE(CURRENT_DATE(), INTERVAL 12 MONTH),
+      CURRENT_DATE()
+  ) AS CHAR charset utf8mb4), '0') AS frequencia,
+  IFNULL(CAST(
+    GetTicketMedioPeriodo(
+      cliente.cod_cliente,  
+      SUBDATE(CURRENT_DATE(), INTERVAL 12 MONTH),
+      CURRENT_DATE()
+  ) AS CHAR charset utf8mb4), '0') AS ticket_medio
 FROM
   cd_cliente AS cliente  
 WHERE

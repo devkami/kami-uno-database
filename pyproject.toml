@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kami-uno-database"
-version = "0.2.7"
+version = "0.2.8"
 description = "Python Connection For Kami database instance from UNO"
 authors = ["Maicon de Menezes <maicon@kamico.com.br>"]
 readme = "README.md"

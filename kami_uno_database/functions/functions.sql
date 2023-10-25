@@ -245,25 +245,32 @@ BEGIN
 END //
 DELIMITER ;
 
-DROP FUNCTION IF EXISTS GetFrequenciaCliente;
-
+DROP FUNCTION IF EXISTS GetQtdMesesNoPeriodo;
 DELIMITER //
-CREATE FUNCTION GetFrequenciaCliente(cod_cliente INT) RETURNS INT
+CREATE FUNCTION GetQtdMesesNoPeriodo(inicio_periodo DATETIME, fim_periodo DATETIME) RETURNS INT
+BEGIN  
+  RETURN TIMESTAMPDIFF(MONTH, inicio_periodo, fim_periodo)+1;  
+END //
+DELIMITER ;
+
+DROP FUNCTION IF EXISTS GetFrequenciaCliente;
+DELIMITER //
+CREATE FUNCTION GetFrequenciaCliente(cod_cliente INT, inicio_periodo DATETIME, fim_periodo DATETIME) RETURNS INT
 BEGIN
   DECLARE avg_monthly_purchases FLOAT;
   
   SET avg_monthly_purchases = GetQtdComprasPeriodo(
     cod_cliente, 
-    DATE(CONCAT(YEAR(CURRENT_DATE()) - 1, '-01-01')),
-    DATE(CONCAT(YEAR(CURRENT_DATE()) - 1, '-12-31'))
-  ) / 12.0;
+    inicio_periodo,
+    fim_periodo
+  ) / GetQtdMesesNoPeriodo(inicio_periodo, fim_periodo);
   
   RETURN 
     CASE 
-      WHEN avg_monthly_purchases >= 6 THEN 5
-      WHEN avg_monthly_purchases < 6 AND avg_monthly_purchases >= 5 THEN 4
-      WHEN avg_monthly_purchases < 5 AND avg_monthly_purchases >= 4 THEN 3
-      WHEN avg_monthly_purchases < 4 AND avg_monthly_purchases >= 2 THEN 2
+      WHEN avg_monthly_purchases >= 1 THEN 5
+      WHEN avg_monthly_purchases >= 0.75 AND avg_monthly_purchases < 1 THEN 4
+      WHEN avg_monthly_purchases >= 0.5 AND avg_monthly_purchases < 0.75 THEN 3
+      WHEN avg_monthly_purchases >= 0.25 AND avg_monthly_purchases < 0.5 THEN 2
       ELSE 1
     END;
 END //

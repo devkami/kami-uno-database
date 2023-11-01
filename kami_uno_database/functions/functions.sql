@@ -297,3 +297,14 @@ BEGIN
   RETURN avg_ticket;
 END //
 DELIMITER ;
+
+DROP FUNCTION IF EXISTS GetSalesChannel;
+DELIMITER //
+CREATE FUNCTION GetSalesChannel(cod_colaborador INT, dt_emissao DATETIME) RETURNS VARCHAR(50)
+BEGIN
+  RETURN CASE 
+    WHEN cod_colaborador IN (3334, 3416, 3391) OR (cod_colaborador = 66 AND dt_emissao >= '2023-10-01') THEN 'televendas'
+    ELSE 'força de vendas'
+  END;
+END //
+DELIMITER ;

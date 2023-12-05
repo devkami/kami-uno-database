@@ -108,10 +108,11 @@ LEFT JOIN cd_empresa AS empresa_pedido
 LEFT JOIN cd_empresa AS empresa_faturamento
   ON empresa_faturamento.cod_empresa = nota_fiscal.cod_empresa
 LEFT JOIN vd_grupo_colaborador AS grupo_colaborador
-  ON grupo_colaborador.cod_colaborador = colaborador.cod_colaborador
+  ON grupo_colaborador.cod_colaborador = pedido.cod_colaborador
   AND grupo_colaborador.cod_empresa = pedido.cod_empresa      
 LEFT JOIN vd_grupo AS grupo_venda
   ON grupo_venda.cod_grupo_venda = grupo_colaborador.cod_grupo_venda
+  AND grupo_venda.cod_empresa = pedido.cod_empresa
 WHERE
   pedido.dt_implant >= '2022-01-01'
   AND pedido.cod_empresa IN (1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 14, 15, 16)
